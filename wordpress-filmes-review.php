@@ -24,6 +24,7 @@ class Filmes_reviews {
         add_action( 'init', array($this, 'Filmes_reviews::register_taxonomies') );
         add_action( 'tgmpa_register', array($this, 'check_required_plugins') );
         add_action( 'rwmb_meta_boxes', array($this, 'metabox_custom_fileds') );
+        add_action( 'template_include', array($this, 'add_cpt_template') );
     }
 
     public static function register_post_type()
@@ -152,6 +153,17 @@ class Filmes_reviews {
             )
         );
         return $meta_boxes;
+    }
+
+    public function add_cpt_template($template)
+    {
+        if( is_singular( 'filmes_review' ) ){
+            if( file_exists( get_stylesheet_directory().'/single-filmes_review.php' ) ){
+                return get_stylesheet_directory().'/single-filmes_review.php';
+            }
+            return plugin_dir_path( __FILE__ ).'single-filmes_review.php';
+        }
+        return $template;
     }
 
     public static function activate()
