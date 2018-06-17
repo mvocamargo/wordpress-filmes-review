@@ -11,7 +11,7 @@ require dirname(__FILE__).'/lib/class-tgm-plugin-activation.php';
 
 class Filmes_reviews {
     private static $instance;
-
+    const FIELD_PREFIX = 'filmes_review_';
     public static function getInstance(){
         if( self::$instance == NULL ){
             self::$instance = new self();
@@ -23,6 +23,7 @@ class Filmes_reviews {
         add_action( 'init', array($this, 'Filmes_reviews::register_post_type') );
         add_action( 'init', array($this, 'Filmes_reviews::register_taxonomies') );
         add_action( 'tgmpa_register', array($this, 'check_required_plugins') );
+        add_action( 'rwmb_meta_boxes', array($this, 'metabox_custom_fileds') );
     }
 
     public static function register_post_type()
@@ -86,6 +87,71 @@ class Filmes_reviews {
             */
         );
         tgmpa( $plugins, $config );
+    }
+
+    public function metabox_custom_fileds()
+    {
+        $meta_boxes[] = array(
+            'id' => 'data_filme',
+            'title' => __( 'Informações Adicionais' ),
+            'pages' => ['filmes_review', 'post'],
+            'context' => 'normal',
+            'priority' => 'high',
+            'fields' => array(
+                array(
+                    'name' => __('Ano de Lançamento'),
+                    'desc' => __('Ano em que o filme foi lançado'),
+                    'id' => self::FIELD_PREFIX.'filme_ano',
+                    'type' => 'number',
+                    'std' => date('Y'),
+                    'min' => '1880',
+                ),
+                array(
+                    'name' => __('Diretor'),
+                    'desc' => __('Quem dirigiu o filme'),
+                    'id' => self::FIELD_PREFIX.'filme_diretor',
+                    'type' => 'text',
+                    'std' => '',
+                ),
+                array(
+                    'name' => __('Site'),
+                    'desc' => __('Link do site do filme'),
+                    'id' => self::FIELD_PREFIX.'filme_site',
+                    'type' => 'url',
+                    'std' => '',
+                ),
+            )
+        );
+        $meta_boxes[] = array(
+            'id' => 'nota_filme',
+            'title' => __( 'Review do Filme' ),
+            'pages' => ['filmes_review'],
+            'context' => 'side',
+            'priority' => 'high',
+            'fields' => array(
+                array(
+                    'name' => __('Rating'),
+                    'desc' => __('Nota de 1 a 10'),
+                    'id' => self::FIELD_PREFIX.'filme_rating',
+                    'type' => 'select',
+                    'options' => array(
+                        '' => __('Avalie o filme'),
+                        1 => __('1'),
+                        2 => __('2'),
+                        3 => __('3'),
+                        4 => __('4'),
+                        5 => __('5'),
+                        6 => __('6'),
+                        7 => __('7'),
+                        8 => __('8'),
+                        9 => __('9'),
+                        10 => __('10'),
+                    ),
+                    'std' => '',
+                ),
+            )
+        );
+        return $meta_boxes;
     }
 
     public static function activate()
