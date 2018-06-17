@@ -21,6 +21,7 @@ class Filmes_reviews {
 
     private function __construct(){
         add_action( 'init', array($this, 'Filmes_reviews::register_post_type') );
+        add_action( 'init', array($this, 'Filmes_reviews::register_taxonomies') );
         add_action( 'tgmpa_register', array($this, 'check_required_plugins') );
     }
 
@@ -35,6 +36,19 @@ class Filmes_reviews {
             'public' => true,
             'menu_position' => 4,
             'menu_icon' => 'dashicons-format-video',
+        ) );
+    }
+
+    public static function register_taxonomies()
+    {
+        register_taxonomy( 'tipos_filmes', array('filmes_review'), array(
+            'labels' => array(
+                'name' => __('Filmes Tipos'),
+                'singular_name' => __('Filme TIpo'),
+            ),
+            'public'=> true,
+            'hierarchical' => true,
+            'rewrite' => array('slug' => 'tipos-filmes'),
         ) );
     }
 
